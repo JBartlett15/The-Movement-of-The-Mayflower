@@ -1,29 +1,37 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using TMPro;
 
 public class Person : MonoBehaviour
 {
     public string fullName;
     public bool hasProblem;
     [SerializeField] GameObject exPoint;
+    [SerializeField] TMP_Text nameText;
 
 
-    private void OnMouseDown()
+    private void Start()
     {
-        print("Schmello");
+        exPoint.SetActive(hasProblem);
+        nameText.SetText("");
     }
 
-
-    void ProblemState(bool problem)
+    public void ClickedOn()
     {
-        if (problem)
-        {
-            hasProblem = true;
-            exPoint.SetActive(true);
-        }
-        else
-        {
-            exPoint.SetActive(false);
-            hasProblem = false;
-        }
+        if (hasProblem) SetProblemState(false);
+    }
+
+    void SetProblemState(bool problem)
+    {
+        if (problem) hasProblem = true;
+        else hasProblem = false;
+        
+        exPoint.SetActive(hasProblem);
+    }
+
+    public void NameHover(bool state)
+    {
+        if (state) nameText.SetText(fullName);
+        else nameText.SetText("");
     }
 }

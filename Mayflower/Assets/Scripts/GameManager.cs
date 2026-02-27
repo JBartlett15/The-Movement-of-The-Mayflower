@@ -1,46 +1,81 @@
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
 
     float timer;
-    int day;
+    int currentDay;
+    Month currentMonth;
+    bool uiOpen;
 
-    Vector3 mousePos;
-    RaycastHit2D ray;
-    Transform clickObject;
+    [SerializeField] TMP_Text dayText;
+    [SerializeField] GameObject textBox;
+    [SerializeField] TMP_Text text;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         timer = 20;
-        day = 0;
+        currentDay = 15;
+        currentMonth = Month.September;
+        textBox.SetActive(false);
+    }
+
+    enum Month
+    {
+        September,
+        October,
+        November
     }
 
     // Took 64 days, and so if aiming for 20 minutes of play, 1 minute makes 3.2 days, rounded down to 3 makes 1 day every 20 seconds
     void Update()
     {
-        mousePos = Input.mousePosition;
-
-        Ray mouseRay = Camera.main.ScreenPointToRay(mousePos);
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            ray = Physics2D.Raycast(mouseRay.origin, mouseRay.direction);
-            clickObject = ray ? ray.collider.transform : null;
-            if(clickObject)
-            {
-                print("Mouseclick");
-                clickObject.GetComponent<SpriteRenderer>().color = Color.red;
-            } // https://www.youtube.com/watch?v=hs2TB3hdylk
-        }
-
         timer += Time.deltaTime;
-        if(timer >= 20)
+        if(timer >= 1) //20
         {
-            day += 1;
-            print("Day " + day);
-            timer = 0;
+            IncrementDay();
         }
     }
+
+    void IncrementDay()
+    {
+        currentDay += 1;
+        timer = 0;
+        if (currentMonth == Month.September && currentDay >= 31)
+        {
+                currentMonth = Month.October;
+                currentDay = 1;
+        }
+        else if (currentMonth == Month.October && currentDay >= 32)
+        {
+                currentMonth = Month.November;
+                currentDay = 1;
+        }
+        else if (currentMonth == Month.November && currentDay >= 20)
+        {
+            
+        }
+
+        dayText.text = currentDay.ToString() + " " + currentMonth + " 1620";
+    }
+
+    public void Problem(GameObject person)
+    {
+        if (person.GetComponent<Person>().hasProblem && !uiOpen)
+        {
+            person.GetComponent<Person>().ClickedOn();
+            textBox.SetActive(true);
+            text.SetText(person.GetComponent<Person>().fullName + " is unhappy");
+            uiOpen = true;
+        }
+    }
+
+    public void CloseTextBox()
+    {
+        uiOpen = false;
+        textBox.SetActive(false);
+    }
+
 }
