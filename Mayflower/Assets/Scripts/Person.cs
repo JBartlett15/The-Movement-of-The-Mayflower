@@ -8,11 +8,12 @@ public class Person : MonoBehaviour
     public bool hasProblem;
     [SerializeField] GameObject exPoint;
     [SerializeField] TMP_Text nameText;
+    public string problem;
 
 
     private void Start()
     {
-        exPoint.SetActive(hasProblem);
+        exPoint.SetActive(false);
         nameText.SetText("");
     }
 
@@ -21,7 +22,9 @@ public class Person : MonoBehaviour
         if (hasProblem) SetProblemState(false);
     }
 
-    void SetProblemState(bool problem)
+
+
+    public void SetProblemState(bool problem)
     {
         if (problem) hasProblem = true;
         else hasProblem = false;
